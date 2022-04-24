@@ -10,6 +10,7 @@
 - 使用者必须对本项目自动化提交的信息负责，如果不信任或是有数据真实性的需求，请自行手动打卡。
 
 ## 更新
+- 2022-4-24 删除了JS依赖，并通过苏康码核酸查询接口获取个人省内核酸记录。
 - 2022-4-17 更新了基于 ddddocr 库的验证码自动识别。
 - 2022-4-10 更新了近日离宁和核酸时间的支持。 
 - 2021-10-19 之前使用的方案实测已经无法正常使用，目前已回退旧方案。已 fork 的用户请更新后使用。
@@ -17,10 +18,16 @@
 ## 使用方法
 1. 将本项目 Fork 到自己的仓库。
 2. 打开自己 Fork 之后的仓库，因为没有填写账户信息，此时若触发打卡，一定会失败。
-3. 进入 `Settings` 选项，点击 `Secret`，并选择 `New Repository Secret`。依次添加以下变量：
+3. 前往 https://scm.szgaj.cn/wjw/health_skm.html 申领网页版苏康码（该网站为苏州公安局，可放心使用）
+申领后可以发现健康码的url格式如下：
+https://jsstm.jszwfw.gov.cn/jkmIndex.html?token=XXX&uuid=XXX
+记住这个token和uuid，它们相当于你的凭证
+4. 进入 `Settings` 选项，点击 `Secret`，并选择 `New Repository Secret`。依次添加以下变量：
    - `username`: 学号
    - `password`: 南京大学统一认证的密码
    - `location`: 你希望打卡的地理位置。比如南京大学仙林校区可以填 `中国江苏省南京市栖霞区九乡河东路`
+   - `SKM_TOKEN`: 你的苏康码token
+   - `SKM_UUID`: 你的苏康码uuid
 
 ![](img/1.png)
 

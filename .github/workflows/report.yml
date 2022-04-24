@@ -7,7 +7,7 @@ on:
       - master
   
   schedule:
-    - cron: '0 13 * * *'
+    - cron: '10 5 * * *'
 
 jobs:
   build:
@@ -28,5 +28,7 @@ jobs:
           NJU_USERNAME: ${{ secrets.username }}
           NJU_PASSWORD: ${{ secrets.password }}
           CURR_LOCATION: ${{ secrets.location }}
+          SKM_TOKEN: ${{ secrets.SKM_TOKEN }}
+          SKM_UUID: ${{ secrets.SKM_UUID }}
         run: |
           python run.py

@@ -5,16 +5,22 @@ PACKAGES:
     NjuUiaAuth
     NjuEliteAuth
 """
-import execjs
 import requests
 import re
-import os
 from io import BytesIO
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+from base64 import b64encode
 import njupass.ocr
 import time
 
 URL_NJU_UIA_AUTH = 'https://authserver.nju.edu.cn/authserver/login'
 URL_NJU_ELITE_LOGIN = 'http://elite.nju.edu.cn/jiaowu/login.do'
+CHARS='ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
+
+def get_random_bytes(l):
+    import random
+    return ''.join(random.choice(CHARS) for i in range(l)).encode('utf-8')
 
 
 class NjuUiaAuth:
@@ -26,7 +32,8 @@ class NjuUiaAuth:
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': "Mozilla/5.0 (Linux; Android 11; M2006J10C Build/RP1A.200720.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/87.0.4280.141 Mobile Safari/537.36  cpdaily/8.2.7 wisedu/8.2.7})"
+            'User-Agent': "Mozilla/5.0 (Linux; Android 11; M2006J10C Build/RP1A.200720.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 cpdaily/8.2.7 wisedu/8.2.7",
+            "Referer": "http://ehallapp.nju.edu.cn/xgfw/sys/mrjkdkappnju/index.html"
         })
 
         r = self.session.get(URL_NJU_UIA_AUTH)
@@ -59,9 +66,15 @@ class NjuUiaAuth:
         ATTRIBUTES:
             password(str): Original password
         """
-        with open(os.path.join(os.path.dirname(__file__), 'resources/encrypt.js')) as f:
-            ctx = execjs.compile(f.read())
-        return ctx.call('encryptAES', password, self.pwdDefaultEncryptSalt)
+        key = re.sub(r'(^\s+)|(\s+\$)', '', self.pwdDefaultEncryptSalt)
+        print(f"pwdDefaultEncryptSalt:{key}\n")
+        key = self.pwdDefaultEncryptSalt.encode('utf-8')
+        data = get_random_bytes(64) + password.encode('utf-8')
+        iv = get_random_bytes(16)
+        cipher = AES.new(key, AES.MODE_CBC,iv)
+        encrypted = cipher.encrypt(pad(data, AES.block_size))
+        encrypted = b64encode(encrypted).decode('utf-8')
+        return encrypted
 
     def needCaptcha(self, username):
         url = 'https://authserver.nju.edu.cn/authserver/needCaptcha.html?username={}'.format(
