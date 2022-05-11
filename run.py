@@ -6,6 +6,8 @@ import time
 import logging
 from covid_test_date import get_covid_test_date
 
+URL_INDEX = "http://ehallapp.nju.edu.cn/xgfw/sys/mrjkdkappnju/index.html"
+URL_UNREAD_LIST = 'http://ehallapp.nju.edu.cn/psfw/sys/tzggapp/mobile/getUnReadCount.do'
 URL_JKDK_LIST = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/getApplyInfoList.do'
 URL_JKDK_APPLY = 'http://ehallapp.nju.edu.cn/xgfw/sys/yqfxmrjkdkappnju/apply/saveApplyInfos.do'
 
@@ -42,6 +44,8 @@ if __name__ == "__main__":
 
     log.info('登录成功！')
 
+    r1 = auth.session.get(URL_UNREAD_LIST)
+    r1 = auth.session.get(URL_INDEX)
     for count in range(10):
         log.info('尝试获取打卡列表信息...')
         r = auth.session.get(URL_JKDK_LIST)
