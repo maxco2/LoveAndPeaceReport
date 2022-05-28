@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: sleep 3 min
         run: |
-        echo 'Health Report Action failed'
-        sleep 180
+          echo 'Health Report Action failed'
+          sleep 180
       - name: Set Up Python
         uses: actions/setup-python@v2
         with:
