@@ -1,0 +1,39 @@
+name: Retry Health Report Action
+
+on:
+  workflow_run:
+    workflows: [Health Report Action]
+    types: [completed]
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo 'Health Report Action passed'
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: sleep 3 min
+        run: |
+          echo 'Health Report Action failed'
+          sleep 180
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Script
+        env:
+          NJU_USERNAME: ${{ secrets.username }}
+          NJU_PASSWORD: ${{ secrets.password }}
+          CURR_LOCATION: ${{ secrets.location }}
+          SKM_TOKEN: ${{ secrets.SKM_TOKEN }}
+          SKM_UUID: ${{ secrets.SKM_UUID }}
+        run: |
+          python run.py
