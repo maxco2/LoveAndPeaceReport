@@ -56,15 +56,15 @@ def get_covid_test_date(token,uuid) -> str:
     if token=='' or uuid=='' or token is None or uuid is None:
         raise Exception("invaild token or uuid")
     abc,name = get_abc(token,uuid)
-    sw_hs_date = get_sw_hs(abc,name)
-    sw_hs_date = datetime.strptime(sw_hs_date,'%Y-%m-%d %H:%M:%S')
+#     sw_hs_date = get_sw_hs(abc,name)
+#     sw_hs_date = datetime.strptime(sw_hs_date,'%Y-%m-%d %H:%M:%S')
     secret = get_secret(abc)
     auth_info = auth_secret(secret)
     report = query_report(auth_info)
     # print(f"report:{report},type:{type(report)}")
     hs_date = report[0]['collectTime']
     hs_date = datetime.strptime(hs_date,'%Y-%m-%d %H:%M')
-    hs_date = max(hs_date,sw_hs_date)
+#     hs_date = max(hs_date,sw_hs_date)
     hs_date = hs_date.strftime("%Y-%m-%d %-H")
     return hs_date
 
